@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YilziPay - Platform Pembayaran Premium</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader-container">
+            <div class="loader"></div>
+            <div class="loader-inner">
+                <i class="fas fa-gem loader-icon"></i>
+            </div>
+        </div>
+        <div class="loading-text">Loading...</div>
+    </div>
+
+    <div class="ai-service" id="aiService">
+        <button class="ai-service-btn" id="aiServiceBtn">
+            <i class="fas fa-robot"></i> AI Services
+        </button>
+        <div class="ai-chat-container" id="aiChatContainer" style="display: none;">
+            <div class="ai-chat-header">
+                <h3>Yola - AI Customer Service</h3>
+                <button class="btn-close" id="closeAiChat">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="ai-chat-messages" id="aiChatMessages"></div>
+            <div class="ai-chat-input">
+                <input type="text" id="aiChatInput" placeholder="Tanya Yola tentang pembayaran...">
+                <button class="btn-send" id="aiSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="payment-card">
+            <div class="card-header">
+                <h1><i class="fas fa-credit-card"></i> Bayar Yuk</h1>
+                <p>Lakukan pembayaran dengan mudah dan aman untuk layanan atau produk Anda</p>
+            </div>
+            
+            <div class="payment-form">
+                <div class="form-group">
+                    <label>Nama Anda</label>
+                    <div class="input-group">
+                        <input type="text" id="payerName" placeholder="Masukkan nama Anda">
+                        <button class="btn-anonymous" id="anonymousBtn">
+                            <i class="fas fa-user-secret"></i> Anonim
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Nominal Pembayaran</label>
+                    <button class="btn-select" id="amountSelectBtn">Pilih Nominal</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Metode Pembayaran</label>
+                    <button class="btn-select" id="paymentMethodBtn">Pilih Metode</button>
+                </div>
+                
+                <div class="form-group" id="messageGroup" style="display: none;">
+                    <label>Catatan Pembayaran <span id="charCount">0/200</span></label>
+                    <textarea id="paymentMessage" placeholder="Tulis catatan Anda di sini..."></textarea>
+                </div>
+                
+                <div class="payment-note">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Pembayaran tidak dapat dikembalikan. Pastikan detail Anda benar sebelum melanjutkan.</p>
+                </div>
+                
+                <button class="btn-pay" id="payBtn">
+                    <i class="fas fa-qrcode"></i> Lanjutkan Pembayaran
+                </button>
+
+                <button class="btn-history" id="historyBtn">
+                    <i class="fas fa-history"></i> Riwayat Pembayaran
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="amountModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Pilih Nominal Pembayaran</h2>
+                <button class="btn-close" id="closeAmountModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="amount-options" id="amountOptions"></div>
+            <div class="custom-amount">
+                <div class="input-prefix">
+                    <span>Rp</span>
+                    <input type="number" id="customAmount" placeholder="Nominal lainnya">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="paymentMethodModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Pilih Metode Pembayaran</h2>
+                <button class="btn-close" id="closePaymentMethodModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="payment-options" id="paymentOptions"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="qrisModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Scan QRIS</h2>
+                <button class="btn-close" id="closeQrisModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="qr-container">
+                <div class="qr-loading" id="qrLoading">
+                    <i class="fas fa-spinner"></i>
+                    <p>Membuat QRIS...</p>
+                </div>
+                <img id="qrisImage" src="" alt="QRIS Code">
+            </div>
+            
+            <div class="payment-details">
+                <div class="payment-info">
+                    <div class="info-item">
+                        <span class="label">Nama</span>
+                        <span class="value" id="modalName">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Nominal</span>
+                        <span class="value" id="modalAmount">Rp 0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Metode</span>
+                        <span class="value" id="modalMethod">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Kadaluarsa</span>
+                        <span class="value" id="modalCountdown">10:00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-check-status" id="checkStatusBtn">
+                <i class="fas fa-sync-alt"></i> Cek Status Pembayaran
+            </button>
+            
+            <button class="btn-cancel" id="cancelPaymentBtn">
+                <i class="fas fa-times-circle"></i> Batalkan
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="paymentDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detail Pembayaran</h2>
+                <button class="btn-close" id="closePaymentDetailsModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="payment-details">
+                <div class="payment-info">
+                    <div class="info-item">
+                        <span class="label">Nama</span>
+                        <span class="value" id="detailName">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Nominal</span>
+                        <span class="value" id="detailAmount">Rp 0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Metode</span>
+                        <span class="value" id="detailMethod">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Nomor Tujuan</span>
+                        <span class="value" id="detailNumber">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Tanggal</span>
+                        <span class="value" id="detailDate">-</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-done" id="confirmPaymentBtn">
+                <i class="fas fa-check"></i> Konfirmasi
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content">
+            <div class="success-animation">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <div class="success-message">
+                <h2>Pembayaran Berhasil!</h2>
+                <p>Terima kasih <span id="successName">Anda</span> telah melakukan pembayaran.</p>
+                <p id="successWish" class="success-wish"></p>
+            </div>
+            
+            <button class="btn-done" id="doneBtn">
+                <i class="fas fa-check"></i> Selesai
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="historyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Riwayat Pembayaran</h2>
+                <button class="btn-close" id="closeHistoryModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="history-container" id="historyContainer">
+                <p>Tidak ada riwayat pembayaran.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="ctrl.js"></script>
+    <script src="script.js"></script>
+</html>
