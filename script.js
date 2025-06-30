@@ -458,7 +458,7 @@ async function sendAiMessage() {
             <div class="dot"></div>
             <div class="dot"></div>
         </div>
-        Yola sedang mengetik...
+        TrieStr sedang mengetik...
     `;
     aiChatMessages.appendChild(typingMessage);
     aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
