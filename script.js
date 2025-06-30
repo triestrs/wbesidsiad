@@ -131,7 +131,7 @@ function fetchPaymentHistory() {
 // AI Service: Interact with Gemini 2.5 Flash as Yola
 async function getAiResponse(message) {
     if (!CONFIG.GEMINI_API_KEY) {
-        return 'Yola: Ups, sepertinya ada masalah teknis. Coba lagi nanti ya, bestie!';
+        return 'TrieStr: Ups, sepertinya ada masalah teknis. Coba lagi nanti ya, bestie!';
     }
 
     const url = 'https://api.gemini.com/v2.5/flash';
